@@ -1,0 +1,19 @@
+/* Chat specific styles */
+
+#chat-window{ padding: 1rem; max-height: calc(100vh - 220px); overflow:auto; }
+
+.message{ margin-bottom: .75rem; }
+
+.bubble{ padding: .6rem .9rem; border-radius: .6rem; }
+.bubble.assistant{ background: #fff; color: var(--color-text); }
+.bubble.user{ background: var(--color-primary); color: white; }
+
+.message .meta{ font-size: .75rem; color: #64748b; margin-top: .25rem; }
+
+.typing{ display:inline-block; padding: .4rem .6rem; background:#eef2ff; border-radius:999px; }
+.typing .dot{ display:inline-block; width:6px; height:6px; background:#6366f1; border-radius:50%; margin:0 2px; animation: blink 1s infinite; }
+@keyframes blink { 0%{opacity:0.2}50%{opacity:1}100%{opacity:0.2} }
+
+.attachment-preview img{ max-width:200px; border-radius:6px; display:block; }
+
+pre code.hljs{ padding: .6rem; border-radius:6px; }

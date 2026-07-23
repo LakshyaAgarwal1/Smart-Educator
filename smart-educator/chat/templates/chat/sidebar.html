@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Chat Sidebar</title>
+</head>
+<body>
+    <h2>Chats</h2>
+    <p><a href="{% url 'chat_new' %}">+ New Chat</a></p>
+    <ul>
+        {% for chat in chats %}
+            <li><a href="{% url 'chat_detail' chat.id %}">{{ chat.title }}</a></li>
+        {% empty %}
+            <li>No chats yet.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

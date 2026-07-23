@@ -1,0 +1,9 @@
+{# Usage: include with sender='user' or 'assistant' and text='...' #}
+<div class="flex {% if sender == 'user' %}justify-end{% else %}justify-start{% endif %}">
+  <div class="max-w-[70%]">
+    <div class="px-4 py-3 rounded-lg shadow-sm {% if sender == 'user' %}bg-primary text-white ml-auto{% else %}bg-white text-default{% endif %}">
+      <div class="text-sm">{{ text }}</div>
+    </div>
+    <div class="text-xs text-muted mt-1 {% if sender == 'user' %}text-right{% endif %}">{% if sender == 'user' %}You{% else %}Assistant{% endif %}</div>
+  </div>
+</div>

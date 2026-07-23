@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Settings - Smart Educator{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <div class="account-card">
+    <h2 class="text-2xl font-semibold mb-3">Settings</h2>
+    <p class="small-muted">Adjust your preferences. Settings are saved locally in the browser.</p>
+
+    <div class="mt-4">
+      <div class="control-row">
+        <div>
+          <div class="text-sm font-medium">Theme</div>
+          <div class="small-muted">Light / Dark / System</div>
+        </div>
+        <select id="theme-toggle" aria-label="Theme selector" class="border px-2 py-1 rounded">
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+
+      <div class="control-row">
+        <div>
+          <div class="text-sm font-medium">Sampling Temperature</div>
+          <div class="small-muted">Controls randomness for generation (0–1)</div>
+        </div>
+        <input id="temperature" type="range" min="0" max="1" step="0.01" value="0.7" aria-label="Temperature slider" />
+      </div>
+
+      <div class="control-row">
+        <div>
+          <div class="text-sm font-medium">Streaming Responses</div>
+          <div class="small-muted">Toggle streaming-like updates</div>
+        </div>
+        <label class="switch" id="streaming-switch" tabindex="0" role="switch" aria-checked="false"><span class="knob"></span></label>
+      </div>
+
+      <div class="control-row">
+        <div>
+          <div class="text-sm font-medium">Default Mode</div>
+          <div class="small-muted">Which mode to use when composing new queries</div>
+        </div>
+        <select id="default-mode" aria-label="Default mode" class="border px-2 py-1 rounded">
+          <option>EXAM</option>
+          <option>WEB</option>
+        </select>
+      </div>
+
+      <div class="mt-4">
+        <div class="account-actions">
+          <a href="/accounts/profile/" class="btn-subtle">Back to Profile</a>
+          <a href="/accounts/logout/" class="btn-subtle">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4 account-card">
+    <h3 class="text-lg font-semibold">Support</h3>
+    <p class="small-muted mt-2">Need help? Visit our support docs or contact support@youremail.example</p>
+    <div class="mt-3 small-muted">Keyboard shortcuts: <strong>T</strong> toggle theme, <strong>/</strong> focus search</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/accounts.js' %}"></script>
+{% endblock %}

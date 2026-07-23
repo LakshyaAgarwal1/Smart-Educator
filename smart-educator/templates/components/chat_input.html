@@ -1,0 +1,19 @@
+<div class="bg-white p-3 rounded shadow-inner sticky bottom-0">
+  <form id="chat-form" class="flex items-end space-x-2">
+    <div class="flex-1">
+      <div class="flex items-center space-x-2 mb-2">
+        <select id="mode-select" class="text-sm border rounded px-2 py-1">
+          <option value="EXAM">EXAM</option>
+          <option value="WEB">WEB</option>
+        </select>
+        <button id="attach-btn" type="button" class="px-2 py-1 border rounded">📎</button>
+        <input id="file-input" name="attachment" type="file" class="hidden" />
+      </div>
+      <textarea id="chat-input" rows="1" class="w-full border rounded px-3 py-2 resize-none" placeholder="Ask anything..." aria-label="message"></textarea>
+      <div id="attachment-preview" class="mt-2 text-sm text-muted"></div>
+    </div>
+    <div class="flex flex-col items-center">
+      <button id="send-btn" type="submit" class="px-4 py-2 bg-primary text-white rounded">Send</button>
+    </div>
+  </form>
+</div>

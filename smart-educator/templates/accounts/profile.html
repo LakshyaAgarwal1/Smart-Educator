@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile - Smart Educator{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="max-w-4xl mx-auto">
+    <div class="account-grid">
+      <section class="account-card">
+        <div class="flex items-center gap-4">
+          <div>
+            {% if profile.profile_picture %}
+              <img data-lazy-src="{{ profile.profile_picture.url }}" alt="{{ profile.user.username }} avatar" class="avatar" />
+            {% else %}
+              <div class="avatar bg-gray-100 flex items-center justify-center small-muted">{{ profile.user.username|first|upper }}</div>
+            {% endif %}
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-xl font-semibold">{{ profile.user.username }}</h2>
+                <div class="small-muted">{{ profile.user.email }}</div>
+              </div>
+              <div class="account-actions">
+                <a href="/accounts/settings/" class="btn-subtle">Settings</a>
+                <a href="/accounts/logout/" class="btn-primary">Logout</a>
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <div class="stat"><div><div class="num" id="profile-doc-count">—</div><div class="small-muted">Documents</div></div></div>
+              <div class="stat"><div><div class="num" id="profile-storage">—</div><div class="small-muted">Storage used</div></div></div>
+            </div>
+            <div class="mt-3 small-muted">Drive connected: {{ profile.drive_connected }} • Drive sync enabled: {{ profile.drive_sync_enabled }}</div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="account-card">
+        <h3 class="text-lg font-semibold">Account Summary</h3>
+        <div class="mt-3 small-muted">
+          <div><strong>Username:</strong> {{ profile.user.username }}</div>
+          <div><strong>Email:</strong> {{ profile.user.email }}</div>
+          <div><strong>Google ID:</strong> {{ profile.google_id|default:"Not connected" }}</div>
+        </div>
+        <div class="mt-4">
+          <h4 class="text-sm font-medium">Support</h4>
+          <div class="small-muted mt-2">If you need help, visit the support page or email support@youremail.example</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/accounts.js' %}"></script>
+{% endblock %}
+
+<!-- Settings modal injected in profile to avoid new backend routes -->
+<div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-start justify-center bg-black/40 p-4 overflow-auto" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+  <div class="bg-white rounded w-full max-w-2xl p-6 account-card">
+    <div class="flex items-center justify-between">
+      <h3 id="settings-title" class="text-lg font-semibold">Settings</h3>
+      <button id="close-settings" class="btn-subtle">Close</button>
+    </div>
+    <div class="mt-3">
+      <div class="control-row">
+        <div>
+          <div class="text-sm font-medium">Theme</div>
+          <div class="small-muted">Light / Dark / System</div>
+        </div>
+        <select id="theme-toggle" aria-label="Theme selector" class="border px-2 py-1 rounded">
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+      <div class="control-row">
+        <div>
+          <div class="text-sm font-medium">Sampling Temperature</div>
+          <div class="small-muted">Controls randomness for generation (0–1)</div>
+        </div>
+        <input id="temperature" type="range" min="0" max="1" step="0.01" value="0.7" aria-label="Temperature slider" />
+      </div>
+      <div class="control-row">
+        <div>
+          <div class="text-sm font-medium">Streaming Responses</div>
+          <div class="small-muted">Toggle streaming-like updates</div>
+        </div>
+        <label class="switch" id="streaming-switch" tabindex="0" role="switch" aria-checked="false"><span class="knob"></span></label>
+      </div>
+      <div class="control-row">
+        <div>
+          <div class="text-sm font-medium">Default Mode</div>
+          <div class="small-muted">Which mode to use when composing new queries</div>
+        </div>
+        <select id="default-mode" aria-label="Default mode" class="border px-2 py-1 rounded">
+          <option>EXAM</option>
+          <option>WEB</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  function openSettings(){ document.getElementById('settingsModal').classList.remove('hidden'); }
+  function closeSettings(){ document.getElementById('settingsModal').classList.add('hidden'); }
+  document.getElementById('close-settings')?.addEventListener('click', closeSettings);
+  if(location.hash === '#settings') setTimeout(openSettings, 300);
+  // sidebar link to #settings
+  document.querySelectorAll('a[href$="#settings"]').forEach(a=> a.addEventListener('click', function(e){ e.preventDefault(); openSettings(); }));
+});
+</script>

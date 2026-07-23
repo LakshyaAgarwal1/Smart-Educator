@@ -1,0 +1,7 @@
+/* Layout specific styles */
+html,body,#app{ height:100%; }
+
+.container{ max-width:1200px; }
+
+/* Main content spacing */
+main { background: transparent; }

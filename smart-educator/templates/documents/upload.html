@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Document</title>
+</head>
+<body>
+    <h1>Upload Document</h1>
+    {% if error %}<p style="color:red">{{ error }}</p>{% endif %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Upload</button>
+    </form>
+    <p><a href="{% url 'document_list' %}">Back to documents</a></p>
+</body>
+</html>

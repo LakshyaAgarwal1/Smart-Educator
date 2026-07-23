@@ -1,0 +1,16 @@
+Django>=6.0,<7.0
+django-allauth
+djangorestframework
+python-dotenv
+requests
+google-api-python-client
+google-auth
+Pillow
+chromadb
+pypdf
+python-docx
+openpyxl
+pandas
+pytesseract
+pdf2image
+rank-bm25

@@ -17,7 +17,6 @@ class GeminiEmbeddingService:
             logger.warning("GEMINI_API_KEY not set; embedding calls will fail at runtime")
 
     def _cache_key(self, text: str) -> str:
-        # simple key; production can use sha256
         return str(hash(text))
 
     def embed_batch(self, chunks: List[Chunk]) -> List[Embedding]:
@@ -35,24 +34,48 @@ class GeminiEmbeddingService:
                 results.append(None)
                 to_request_idx.append(i)
 
-        if to_request_idx:
-            try:
-                payload_texts = [texts[i] for i in to_request_idx]
-                # Example Gemini embeddings call - adapt to real API
-                url = os.environ.get('GEMINI_EMBEDDING_URL', 'https://api.generativeai.google/v1beta2/embeddings:embed')
-                headers = {'Authorization': f'Bearer {self.api_key}', 'Content-Type': 'application/json'}
-                body = {"model": "gemini-embedding-1.0", "input": payload_texts}
-                resp = requests.post(url, json=body, headers=headers, timeout=30)
-                resp.raise_for_status()
-                data = resp.json()
-                vectors = [item['embedding'] for item in data.get('data', [])]
-                for i, vec in zip(to_request_idx, vectors):
-                    key = self._cache_key(texts[i])
-                    self.cache.set(key, vec)
-                    results[i] = Embedding(id=str(i), vector=vec, metadata=chunks[i].metadata)
-            except Exception as e:
-                logger.exception('Embedding batch failed')
-                raise EmbeddingError(str(e))
+        if to_request_idx and self.api_key:
+            from concurrent.futures import ThreadPoolExecutor
 
-        # filter None
+            batch_size = 50
+            sub_batches = [to_request_idx[j:j + batch_size] for j in range(0, len(to_request_idx), batch_size)]
+
+            def _process_sub_batch(sub_indices):
+                try:
+                    payload_texts = [texts[idx] for idx in sub_indices]
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:batchEmbedContents?key={self.api_key}"
+                    body = {
+                        "requests": [
+                            {
+                                "model": "models/gemini-embedding-001",
+                                "content": {"parts": [{"text": t}]}
+                            }
+                            for t in payload_texts
+                        ]
+                    }
+                    resp = requests.post(url, json=body, timeout=25)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        embeddings_data = data.get('embeddings', [])
+                        for idx, item in zip(sub_indices, embeddings_data):
+                            vec = item.get('values', [])
+                            if vec:
+                                key = self._cache_key(texts[idx])
+                                self.cache.set(key, vec)
+                                results[idx] = Embedding(id=str(idx), vector=vec, metadata=chunks[idx].metadata)
+                    else:
+                        logger.warning("Gemini embedding endpoint returned %d: %s", resp.status_code, resp.text[:200])
+                except Exception as e:
+                    logger.warning('Embedding sub-batch failed: %s', e)
+
+            max_threads = min(len(sub_batches), 4)
+            if max_threads > 1:
+                with ThreadPoolExecutor(max_workers=max_threads) as executor:
+                    list(executor.map(_process_sub_batch, sub_batches))
+            else:
+                for sb in sub_batches:
+                    _process_sub_batch(sb)
+
+        # Return whatever was embedded/cached
         return [r for r in results if r is not None]
+

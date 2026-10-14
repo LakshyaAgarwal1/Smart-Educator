@@ -76,8 +76,16 @@ def rename_chat_view(request, chat_id):
 
 
 def dashboard_view(request):
-    """Render the main dashboard layout (chat center, sidebar, sources)."""
-    recent_chats = []
-    if request.user.is_authenticated:
-        recent_chats = HistoryService.list_user_chats(request.user)[:10]
-    return render(request, 'dashboard.html', {'recent_chats': recent_chats})
+    """Redirect root access to Vite React SPA."""
+    return redirect('http://127.0.0.1:5173/')
+
+
+@login_required
+def chat_list_view(request):
+    return redirect('http://127.0.0.1:5173/')
+
+
+@login_required
+def chat_detail_view(request, chat_id):
+    return redirect('http://127.0.0.1:5173/')
+

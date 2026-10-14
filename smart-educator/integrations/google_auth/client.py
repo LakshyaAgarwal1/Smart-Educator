@@ -15,7 +15,7 @@ class GoogleAuthClient:
         self.redirect_uri = os.getenv('GOOGLE_REDIRECT_URI', 'http://127.0.0.1:8000/accounts/google/login/callback/')
         self.scope = 'openid email profile https://www.googleapis.com/auth/drive.readonly'
 
-    def build_login_url(self):
+    def build_login_url(self, state=None):
         params = {
             'client_id': self.client_id,
             'redirect_uri': self.redirect_uri,
@@ -24,6 +24,8 @@ class GoogleAuthClient:
             'access_type': 'offline',
             'prompt': 'consent',
         }
+        if state:
+            params['state'] = state
         return 'https://accounts.google.com/o/oauth2/v2/auth?' + urlencode(params)
 
     def exchange_code(self, code):

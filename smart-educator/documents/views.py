@@ -12,14 +12,7 @@ from .services.sync_service import SyncService
 
 @login_required
 def document_list_view(request):
-    documents = Document.objects.filter(user=request.user)
-    sync_status = request.session.pop('sync_status', None)
-    sync_message = request.session.pop('sync_message', None)
-    return render(request, 'documents/list.html', {
-        'documents': documents,
-        'sync_status': sync_status,
-        'sync_message': sync_message,
-    })
+    return redirect('http://127.0.0.1:5173/')
 
 
 @login_required
@@ -71,7 +64,7 @@ def upload_document_view(request):
     else:
         form = DocumentUploadForm()
 
-    return render(request, 'documents/upload.html', {'form': form})
+    return redirect('http://127.0.0.1:5173/')
 
 
 @login_required
@@ -82,15 +75,12 @@ def delete_document_view(request, document_id):
         if storage_path.exists():
             storage_path.unlink(missing_ok=True)
         document.delete()
-    return redirect('document_list')
+    return redirect('http://127.0.0.1:5173/')
 
 
 @login_required
 def document_detail_view(request, document_id):
-    document = Document.objects.filter(user=request.user, id=document_id).first()
-    if not document:
-        return redirect('document_list')
-    return render(request, 'documents/detail.html', {'document': document})
+    return redirect('http://127.0.0.1:5173/')
 
 
 @login_required

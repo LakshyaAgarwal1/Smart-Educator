@@ -12,7 +12,7 @@ class GeminiClient:
         self.api_key = api_key or ensure_env('GEMINI_API_KEY')
         self.base_url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
 
-    def generate(self, prompt, temperature=0.2):
+    def generate(self, prompt, temperature=0.5):
         payload = {
             'contents': [{'parts': [{'text': prompt}]}],
             'generationConfig': {'temperature': temperature},

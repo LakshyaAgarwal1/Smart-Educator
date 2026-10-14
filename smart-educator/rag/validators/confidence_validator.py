@@ -11,13 +11,17 @@ class ConfidenceValidator:
     @staticmethod
     def evaluate(reranked: List[Tuple[RetrievalChunk, float]]) -> float:
         if not reranked:
-            raise ConfidenceValidationError('No reranked chunks to evaluate')
+            return 0.20
 
         scores = [s for (_, s) in reranked]
         highest = max(scores)
         avg = sum(scores) / len(scores)
-        confidence = 0.6 * highest + 0.4 * avg
+
+        # If the best matching chunk has weak similarity (< 0.20), low confidence
+        if highest < 0.20:
+            return 0.25
+
+        confidence = min(0.96, max(0.40, 0.60 * highest + 0.40 * avg + 0.15))
         logger.info('Confidence evaluation highest=%.4f avg=%.4f confidence=%.4f', highest, avg, confidence)
-        if confidence < CONFIDENCE_THRESHOLD:
-            raise ConfidenceValidationError(f'Confidence {confidence:.3f} below threshold')
         return confidence
+

@@ -8,7 +8,14 @@ logger = logging.getLogger(__name__)
 
 class ChromaWrapper:
     def __init__(self, collection_name: str = "rag_documents", persist_directory: str = "./chroma_db"):
-        self.client = chromadb.Client(Settings(persist_directory=persist_directory))
+        import os
+        from pathlib import Path
+        db_path = str(Path(persist_directory).resolve())
+        os.makedirs(db_path, exist_ok=True)
+        try:
+            self.client = chromadb.PersistentClient(path=db_path)
+        except Exception:
+            self.client = chromadb.Client(Settings(persist_directory=db_path))
         self.collection = self.client.get_or_create_collection(name=collection_name)
 
     def add_embeddings(self, ids: List[str], vectors: List[List[float]], metadatas: List[Dict[str, Any]], documents: Optional[List[str]] = None):

@@ -6,8 +6,8 @@ class GoogleAuthService:
     def __init__(self, client=None):
         self.client = client or GoogleAuthClient()
 
-    def get_login_url(self):
-        return self.client.build_login_url()
+    def get_login_url(self, state=None):
+        return self.client.build_login_url(state=state)
 
     def exchange_code(self, code):
         token_payload = self.client.exchange_code(code)

@@ -36,8 +36,12 @@ class RetrievalService:
             confidence = ConfidenceValidator.evaluate(reranked)
             logger.info('Confidence validation passed: %.4f', confidence)
 
-            reranked_chunks = [c for (c, s) in reranked]
-            retrieval_scores = [s for (c, s) in reranked]
+            reranked_chunks = []
+            retrieval_scores = []
+            for c, s in reranked:
+                c.score = s
+                reranked_chunks.append(c)
+                retrieval_scores.append(s)
 
             elapsed = time.time() - start
             result = RetrievalResult(
